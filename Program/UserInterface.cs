@@ -1,45 +1,39 @@
 ﻿using System;
-
+using System.Collections.Generic;
 namespace Program
 {
     class UserInterface
     {
-        private static ushort m_userGuessNum = 0; // TODO: check name convention
-        
-        private enum eGuessBoundaries
+
+        public static void PrintArray<T>(List<T> i_ToPrint)
         {
-            MinGuessNum = 4,
-            MaxGuessNum = 10
+            foreach (T element in i_ToPrint)
+            {
+                Console.Write("{0} ",element.ToString());
+            }
+            Console.WriteLine();
         }
 
-        public static void ProgramFlow()
-        {
-            GetGuessesAmount();
-            
-            Ex02.ConsoleUtils.Screen.Clear();
-
-            PrintBoard();
-        }
-
-        public static void PrintBoard()
-        {
-            
-        }
-
-        public static void GetGuessesAmount()
+        public static ushort GetGuessesAmount()
         {
             bool legalInput = true;
+
             ushort guesses;
+            // TODO: use getters?
+            ushort minGuessBound = (ushort)GameManager.eGuessAmountBounds.MinGuessNum;
+            ushort maxGuessBound = (ushort)GameManager.eGuessAmountBounds.MaxGuessNum;
+
+
             do
             {
                 Console.WriteLine(
                     "Please enter the maximum amount of guesses you wish ({0} - {1})",
-                   (ushort)eGuessBoundaries.MinGuessNum, (ushort)eGuessBoundaries.MaxGuessNum);
+                  minGuessBound, maxGuessBound);
 
                 string userInput = Console.ReadLine();
 
                 legalInput = ushort.TryParse(userInput, out guesses) &&
-                    guesses >= (ushort)eGuessBoundaries.MinGuessNum && guesses <= (ushort)eGuessBoundaries.MinGuessNum;
+                    (guesses >= minGuessBound && guesses <= maxGuessBound);
 
 
                 if (!legalInput)
@@ -49,8 +43,8 @@ namespace Program
             }
             while (!legalInput);
 
-            // finally, insert legal guesses amount to member
-            m_userGuessNum = guesses;
+            // finally, return guesse
+            return guesses;
         }
     }
 }
