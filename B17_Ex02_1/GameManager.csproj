@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3DECE73A-ADC7-4DFC-B41A-1FFA592FA7AD}</ProjectGuid>
+    <ProjectGuid>{94698AF0-B6B3-4291-8F1F-468CC7F86835}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>B17_Ex02_Dor_201389681_Idan_307948836</RootNamespace>
-    <AssemblyName>B17 Ex02 Dor 201389681 Idan 307948836</AssemblyName>
+    <RootNamespace>B17_Ex02_1</RootNamespace>
+    <AssemblyName>B17_Ex02_1</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
