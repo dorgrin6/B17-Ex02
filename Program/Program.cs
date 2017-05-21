@@ -7,7 +7,7 @@ namespace Program
         public static void Main()
         {
             UserInterface.ProgramFlow();
-            Console.WriteLine("Enter any key to continue...");
+            Console.WriteLine("Press enter to continue...");
             Console.ReadLine();
         }
     }

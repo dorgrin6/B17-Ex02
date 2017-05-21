@@ -18,7 +18,12 @@ namespace Program
             
             Ex02.ConsoleUtils.Screen.Clear();
 
+            PrintBoard();
+        }
 
+        public static void PrintBoard()
+        {
+            
         }
 
         public static void GetGuessesAmount()
