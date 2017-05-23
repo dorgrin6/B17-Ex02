@@ -18,6 +18,8 @@ namespace Program
         private char[,] m_ResultsBoard; // holds result given to user
 
 
+
+
         internal enum eGuessAmountBounds : ushort
         {
             MinGuessNum = 4,

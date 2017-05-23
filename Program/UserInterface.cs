@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 namespace Program
 {
+    using System.Text;
+
     class UserInterface
     {
         GameLogic m_Logic = new GameLogic();
@@ -21,12 +23,13 @@ namespace Program
             //m_ResultsBoard = new char[m_userGuessNum, k_GuessArraySize];
         }
 
-
         public static void PrintCurrentBoardStatus()
         {
+            
+
 
             Console.WriteLine("Current board status:");
-            Console.WriteLine("|Pins:\t|Result:|");
+            Console.WriteLine("|Pins:|Result:|");
             Console.WriteLine(" A C B D\t|X X X\t|");
         }
 

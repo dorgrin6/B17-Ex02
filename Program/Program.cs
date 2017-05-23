@@ -7,8 +7,8 @@ namespace Program
     {
         public static void Main()
         {
-           UserInterface GameInterface = new UserInterface();
-            GameInterface.Run();
+           UserInterface gameInterface = new UserInterface();
+            gameInterface.Run();
 
             Console.WriteLine("Press enter to continue...");
             Console.ReadLine();
