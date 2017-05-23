@@ -3,28 +3,29 @@ using System.Collections.Generic;
 
 namespace Program
 {
-
-    class GameManager
+    class GameLogic
     {
+        private const ushort k_GuessArraySize = 4; // guesses array size
+
+        private ushort m_userGuessNum; // holds amount of guesses wanted by user
+
         private List<char> m_ValuesToGuess = new List<char>(k_GuessArraySize); // holds computer guesses
 
         private List<char> m_UserGuesses = new List<char>(k_GuessArraySize); // holds user guesses
 
         private char[,] m_GuessBoard;  // holds current play board
 
-        private char[,] m_ResultsBoard; // holds result given
+        private char[,] m_ResultsBoard; // holds result given to user
 
-        private const ushort k_GuessArraySize = 4; // guesses array size
+ 
 
-        private ushort m_userGuessNum; // holds amount of guesses wanted by user 
-
-        internal enum eGuessAmountBounds
+        internal enum eGuessAmountBounds : ushort
         {
             MinGuessNum = 4,
             MaxGuessNum = 10
         }
 
-        internal enum eGuessLetterBounds
+        internal enum eGuessLetterBounds : ushort
         {
             MinGuessLetter = 'A',
             MaxGuessLetter = 'H'
@@ -51,9 +52,9 @@ namespace Program
             Ex02.ConsoleUtils.Screen.Clear();
             getValuesToGuess();
 
-            // set GuessBpard and ResultBoard
+            // set GuessBoard and ResultBoard
             m_GuessBoard = new char[m_userGuessNum,k_GuessArraySize];
-            this.m_ResultsBoard = new char[this.m_userGuessNum, k_GuessArraySize];
+            m_ResultsBoard = new char[m_userGuessNum, k_GuessArraySize];
 
             UserInterface.PrintArray<char>(m_ValuesToGuess);
         }

@@ -20,8 +20,8 @@ namespace Program
 
             ushort guesses;
             // TODO: use getters?
-            ushort minGuessBound = (ushort)GameManager.eGuessAmountBounds.MinGuessNum;
-            ushort maxGuessBound = (ushort)GameManager.eGuessAmountBounds.MaxGuessNum;
+            ushort minGuessBound = (ushort)GameLogic.eGuessAmountBounds.MinGuessNum;
+            ushort maxGuessBound = (ushort)GameLogic.eGuessAmountBounds.MaxGuessNum;
 
 
             do
