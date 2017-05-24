@@ -6,40 +6,28 @@ namespace Program
 
     class UserInterface
     {
+
         GameLogic m_Logic = new GameLogic();
+
+        internal enum eGameKeys
+        {
+            quitKey = 'Q',
+            yesKey = 'Y',
+            noKey = 'N'
+        }
 
         public void Run()
         {
-            // get amount of guesses
             GetGuessesAmount();
+            m_Logic.initiateGame();
 
-            Ex02.ConsoleUtils.Screen.Clear();
-            //getValuesToGuess();
-
-            PrintCurrentBoardStatus();
-
-            // set GuessBoard and ResultBoard
-           // this.m_GuessesBoard = new char[m_userGuessNum, k_GuessArraySize];
-            //m_ResultsBoard = new char[m_userGuessNum, k_GuessArraySize];
-        }
-
-        public static void PrintCurrentBoardStatus()
-        {
-            
-
-
-            Console.WriteLine("Current board status:");
-            Console.WriteLine("|Pins:|Result:|");
-            Console.WriteLine(" A C B D\t|X X X\t|");
-        }
-
-        public static void PrintArray<T>(List<T> i_ToPrint)
-        {
-            foreach (T element in i_ToPrint)
+            for (int i = 0; i < m_Logic.UserGuessesAmount; i++)
             {
-                Console.Write("{0} ",element.ToString());
+                Ex02.ConsoleUtils.Screen.Clear();
+                PrintCurrentBoardStatus();
+                GetUserGuess(i);
             }
-            Console.WriteLine();
+
         }
 
         public void GetGuessesAmount()
@@ -47,7 +35,7 @@ namespace Program
             bool legalInput = true;
 
             ushort guessesAmount;
-            
+
             ushort minGuessBound = (ushort)GameLogic.eGuessAmountBounds.MinGuessNum;
             ushort maxGuessBound = (ushort)GameLogic.eGuessAmountBounds.MaxGuessNum;
 
@@ -72,6 +60,157 @@ namespace Program
 
             // finally, change guesses amount
             m_Logic.UserGuessesAmount = guessesAmount;
+        }
+
+        public void GetUserGuess(int index)
+        {
+            bool legalInput;
+            string userInput;
+
+            do
+            {
+                Console.Write("Please type your next guess <");
+                for (int i = 0; i < m_Logic.GuessArraySize; i++)
+                {
+                    Console.Write("{0}", 'A' + i);
+                    if (i < m_Logic.GuessArraySize - 1)
+                    {
+                        Console.Write(" ");
+                    }
+                }
+                Console.WriteLine("> or '{0}' to quit", eGameKeys.quitKey);
+
+                userInput = Console.ReadLine();
+                legalInput = CheckIfLegal(userInput);
+
+                if (!(legalInput))
+                {
+                    Console.WriteLine("Wrong input, please try again");
+                }
+            } while (!(legalInput));
+        }
+
+        public bool CheckIfLegal(string guess)
+        {
+            bool legalInput = true;
+
+            // checks if the string is too short or too long
+            if ((guess.Length != m_Logic.GuessArraySize * 2 - 1) && legalInput)
+            {
+                legalInput = false;
+            }
+
+            // checks if each letter is legal logically and if they are seperated by spaces
+            for (int i = 0; i < guess.Length; i++)
+            {
+                if (m_Logic.CheckIfLetterLegal(guess[i]))
+                {
+                    i++;
+                }
+                else
+                {
+                    legalInput = false;
+                    break;
+                }
+
+                if (i < guess.Length)
+                {
+                    if (guess[i] != ' ')
+                    {
+                        legalInput = false;
+                        break;
+                    }
+                }
+            }
+
+            return legalInput;
+        }
+
+        public void PrintCurrentBoardStatus()
+        {
+            ushort barSize = calculateBarSize();
+            string pinsString = "Pins:";
+            string resultsString = "Results:";
+
+            Console.WriteLine("Current board status:{0}",System.Environment.NewLine);
+
+            Console.Write("|{0}", pinsString);
+            printDuplicateChar(' ', (ushort)(barSize - pinsString.Length));
+
+            Console.Write("|{0}", resultsString);
+            printDuplicateChar(' ', (ushort)((barSize-1) - resultsString.Length));
+
+
+            // TODO: we need to print here the # # # #, but we should do it more efficient
+
+            Console.Write(System.Environment.NewLine);
+           
+            printBoard();
+
+       
+        }
+
+        public void printBoard()
+        {
+            for(int i = 0; i < m_Logic.UserGuessesAmount; i++)
+            {
+                printBoardLine(i);
+            }
+        }
+ 
+        public void printBoardLine(int line)
+        {
+            ushort barSize = calculateBarSize();
+            ushort resultsAmount = (ushort)(m_Logic.Board[line].ExistRightPlaceResult + m_Logic.Board[line].ExistWrongPlaceResult);
+
+            Console.Write("| ");
+            for (int i = 0; i < m_Logic.GuessArraySize; i++)
+            {
+                printGuess(line, i);
+                Console.Write(' ');
+            }
+            Console.Write('|');
+
+            // TODO: duplication of code!!!!!!!!!!!!!!!!!
+            for (int i = 0; i<m_Logic.Board[line].ExistRightPlaceResult; i++)
+            {
+                Console.Write("{0} ", BoardLine.eResultLetter.ExistRightPlace);
+            }
+            for (int i = 0; i<m_Logic.Board[line].ExistWrongPlaceResult; i++)
+            {
+                Console.Write("{0} ", BoardLine.eResultLetter.ExistWrongPlace);
+            }
+
+            printDuplicateChar(' ', (ushort)((barSize-1) - resultsAmount * 2));
+            Console.Write("|{0}",System.Environment.NewLine);
+            printBorder(barSize);
+        }
+
+        public void printGuess(int line, int col)
+        {
+            Console.Write("{0}", m_Logic.Board[line][col]);
+        }
+
+        public void printBorder(ushort barSize)
+        {
+            Console.Write('|');
+            printDuplicateChar('=', barSize);
+            Console.Write('|');
+            printDuplicateChar('=', (ushort)(barSize - 1));
+            Console.WriteLine('|');
+        }
+
+        private ushort calculateBarSize()
+        {
+            return (ushort)(m_Logic.GuessArraySize * 2 + 1);
+        }
+
+        private void printDuplicateChar(char ch, ushort repeats)
+        {
+            for (int i = 0; i < repeats; i++)
+            {
+                Console.Write(ch);
+            }
         }
     }
 }
