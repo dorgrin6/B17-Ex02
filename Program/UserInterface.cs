@@ -2,35 +2,128 @@
 using System.Collections.Generic;
 namespace Program
 {
+
     using System.Text;
 
     class UserInterface
     {
-
         GameLogic m_Logic = new GameLogic();
 
-        internal enum eGameKeys
+        internal enum eGameKeys : ushort
         {
             quitKey = 'Q',
             yesKey = 'Y',
             noKey = 'N'
         }
 
+        internal enum eRunState : ushort
+        {
+            Continue,
+            Lost,
+            Won,
+            EndSession,
+            EndGame
+        }
+
         public void Run()
         {
-            GetGuessesAmount();
-            m_Logic.initiateGame();
-
-            for (int i = 0; i < m_Logic.UserGuessesAmount; i++)
+            eRunState runState;
+            ushort stepsTaken;
+            do
             {
-                Ex02.ConsoleUtils.Screen.Clear();
-                PrintCurrentBoardStatus();
-                GetUserGuess(i);
-            }
+                runState = this.gameLoop(out stepsTaken);
+                if (runState == eRunState.Won)
+                {
+                    Console.WriteLine("You guessed after {0} steps!", stepsTaken);
+                }
+                else if (runState == eRunState.Continue)
+                {
+                    Console.WriteLine("No more guesses allowed. You Lost.");
+                }
+
+                Console.WriteLine("Would you like to start a new game? (Y/N)");
+                string input = Console.ReadLine();
+
+
+                // TODO: input validation
+                if (input == "N")
+                {
+                    runState = eRunState.EndGame;
+                }
+               }
+            while (runState != eRunState.EndGame);
 
         }
 
-        public void GetGuessesAmount()
+        private eRunState gameLoop(out ushort o_StepsTaken)
+        {
+            eRunState runState = eRunState.Continue;
+            getGuessesAmount();
+            m_Logic.initiateGame();
+            o_StepsTaken = 0;
+
+            // TODO: Q?, Correct answer
+            for (int i = 0; i < m_Logic.UserGuessesAmount && runState == eRunState.Continue; i++)
+            {
+                Ex02.ConsoleUtils.Screen.Clear();
+                PrintCurrentBoardStatus();
+                runState = this.handleInput(i);
+                ++o_StepsTaken;
+            }
+            
+            return runState;
+        }
+
+        private eRunState handleInput(int i_BoardIndex)
+        {
+            eRunState result = eRunState.Continue;
+            string userGuess = this.getUserGuess();
+
+            if (userGuess == ((char)eGameKeys.quitKey).ToString())
+            {
+                result = eRunState.EndSession;
+            }
+            else
+            {
+                BoardLine currentLine = this.m_Logic.Board[i_BoardIndex];
+
+                // split guess by whitespaces and insert to board
+                currentLine.UserGuess = userGuess.Replace(" ", string.Empty).ToCharArray();
+
+                setExistingLettersInGuess(currentLine);
+
+                if (hasUserWon(currentLine))
+                {
+                    result = eRunState.Won;
+                }
+            }
+
+            return result;
+        }
+
+        private bool hasUserWon(BoardLine CurrentBoardLine)
+        {
+            return (CurrentBoardLine.ExistRightPlaceResult == this.m_Logic.GuessArraySize);
+        }
+
+
+        private void setExistingLettersInGuess(BoardLine CurrentBoardLine)
+        {
+            ushort rightPlaceCount;
+            ushort wrongPlaceCount;
+
+            // count right place and wrong place guesses
+            this.m_Logic.CountLettersExistsInGuess(CurrentBoardLine.UserGuess, out rightPlaceCount, out wrongPlaceCount);
+
+            // set results
+            CurrentBoardLine.ExistRightPlaceResult = rightPlaceCount;
+            CurrentBoardLine.ExistWrongPlaceResult = wrongPlaceCount;
+        }
+
+
+        // TODO: 2 almost duplicate input string methods here, how to bind them? would like function pointer as boolean
+
+        private void getGuessesAmount()
         {
             bool legalInput = true;
 
@@ -62,69 +155,92 @@ namespace Program
             m_Logic.UserGuessesAmount = guessesAmount;
         }
 
-        public void GetUserGuess(int index)
+        private string getUserGuess()
         {
+            string userInput; // function's return value
             bool legalInput;
-            string userInput;
 
             do
             {
                 Console.Write("Please type your next guess <");
                 for (int i = 0; i < m_Logic.GuessArraySize; i++)
                 {
-                    Console.Write("{0}", 'A' + i);
+                    Console.Write("{0}", (char)('A' + i) );
                     if (i < m_Logic.GuessArraySize - 1)
                     {
                         Console.Write(" ");
                     }
                 }
-                Console.WriteLine("> or '{0}' to quit", eGameKeys.quitKey);
+                Console.WriteLine("> or '{0}' to quit", (char)eGameKeys.quitKey);
 
                 userInput = Console.ReadLine();
-                legalInput = CheckIfLegal(userInput);
+                legalInput = this.IsLegalInput(userInput);
 
-                if (!(legalInput))
+                if (!legalInput)
                 {
                     Console.WriteLine("Wrong input, please try again");
                 }
-            } while (!(legalInput));
+            } while (!legalInput);
+
+            return userInput;
         }
 
-        public bool CheckIfLegal(string guess)
+        private bool inputHasSpaces(string i_Input)
         {
-            bool legalInput = true;
+            bool result = true;
 
-            // checks if the string is too short or too long
-            if ((guess.Length != m_Logic.GuessArraySize * 2 - 1) && legalInput)
+            for (int i = 0; i < i_Input.Length && result; i+=2)
             {
-                legalInput = false;
+                if (i_Input[i] != ' ')
+                {
+                    result = false;
+                }
             }
 
-            // checks if each letter is legal logically and if they are seperated by spaces
-            for (int i = 0; i < guess.Length; i++)
+            return result;
+        }
+
+        public bool IsLegalInput(string i_UserGuess)
+        {
+            bool result;
+            bool hasSpaces = true;
+            bool hasLegalLetters = true;
+
+            bool isCorrectSize =
+              (i_UserGuess.Length == m_Logic.GuessArraySize * 2 - 1);
+
+            for (int i = 0; i < i_UserGuess.Length; i++)
             {
-                if (m_Logic.CheckIfLetterLegal(guess[i]))
+                if (m_Logic.isLetterLegal(i,i_UserGuess))
                 {
                     i++;
                 }
                 else
                 {
-                    legalInput = false;
+                    hasLegalLetters = false;
                     break;
                 }
 
-                if (i < guess.Length)
+                if (i < i_UserGuess.Length)
                 {
-                    if (guess[i] != ' ')
+                    if (i_UserGuess[i] != ' ')
                     {
-                        legalInput = false;
+                        hasSpaces = false;
                         break;
                     }
                 }
             }
 
-            return legalInput;
+
+            result = (i_UserGuess == ((char)eGameKeys.quitKey).ToString()) || 
+                (hasLegalLetters && hasSpaces && isCorrectSize);
+
+            return result;
         }
+
+
+
+        // Print methods
 
         public void PrintCurrentBoardStatus()
         {
@@ -142,6 +258,8 @@ namespace Program
 
 
             // TODO: we need to print here the # # # #, but we should do it more efficient
+
+
 
             Console.Write(System.Environment.NewLine);
            
@@ -161,24 +279,35 @@ namespace Program
         public void printBoardLine(int line)
         {
             ushort barSize = calculateBarSize();
-            ushort resultsAmount = (ushort)(m_Logic.Board[line].ExistRightPlaceResult + m_Logic.Board[line].ExistWrongPlaceResult);
+            ushort resultsAmount = 
+                (ushort)(m_Logic.Board[line].ExistRightPlaceResult + m_Logic.Board[line].ExistWrongPlaceResult);
+
+            //StringBuilder boardPrint = new StringBuilder();
+
+            //boardPrint.Append("| ");
 
             Console.Write("| ");
+
+
             for (int i = 0; i < m_Logic.GuessArraySize; i++)
             {
                 printGuess(line, i);
                 Console.Write(' ');
+
+               // boardPrint.Append(' ');
             }
             Console.Write('|');
+            //boardPrint.Append('|');
 
-            // TODO: duplication of code!!!!!!!!!!!!!!!!!
+
             for (int i = 0; i<m_Logic.Board[line].ExistRightPlaceResult; i++)
             {
-                Console.Write("{0} ", BoardLine.eResultLetter.ExistRightPlace);
+                Console.Write("{0} ", (char)BoardLine.eResultLetter.ExistRightPlace);
+                //boardPrint.AppendFormat("{0} ", (char)BoardLine.eResultLetter.ExistRightPlace);
             }
             for (int i = 0; i<m_Logic.Board[line].ExistWrongPlaceResult; i++)
             {
-                Console.Write("{0} ", BoardLine.eResultLetter.ExistWrongPlace);
+                Console.Write("{0} ", (char)BoardLine.eResultLetter.ExistWrongPlace);
             }
 
             printDuplicateChar(' ', (ushort)((barSize-1) - resultsAmount * 2));

@@ -16,10 +16,10 @@ namespace Program
 
         public BoardLine(ushort amount)
         {
-            m_UserGuess = new char[amount];
+            UserGuess = new char[amount];
             for (int i = 0; i < amount; i++)
             {
-                m_UserGuess[i] = ' ';
+                UserGuess[i] = ' ';
             }
         }
 
@@ -29,6 +29,10 @@ namespace Program
             {
                 return m_ExistWrongPlaceResult;
             }
+            set
+            {
+                this.m_ExistWrongPlaceResult = value;
+            }
         }
 
         public ushort ExistRightPlaceResult
@@ -37,17 +41,34 @@ namespace Program
             {
                 return m_ExistRightPlaceResult;
             }
+            set
+            {
+                this.m_ExistRightPlaceResult = value;
+            }
+        }
+
+        public char[] UserGuess
+        {
+            get
+            {
+                return this.m_UserGuess;
+            }
+            set
+            {
+                m_UserGuess = value;
+
+            }
         }
 
         public char this[int i_index]
         {
             get
             {
-                return m_UserGuess[i_index];
+                return UserGuess[i_index];
             }
             set
             {
-                m_UserGuess[i_index] = value;
+                UserGuess[i_index] = value;
             }
         }
     }
