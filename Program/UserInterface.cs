@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Text;
 namespace Program
 {
     class UserInterface
@@ -86,9 +86,9 @@ namespace Program
         private eRunState handleGuessInput(int i_BoardIndex)
         {
             eRunState result = eRunState.Continue;
-            string userGuess = this.getUserGuess();
+            string userGuess = this.getUserGuess(); // get next user guess
+          
 
-            
             if (userGuess == ((char)eGameKeys.quitKey).ToString()) // user opted to quit
             {
                 result = eRunState.EndSession;
@@ -201,7 +201,7 @@ namespace Program
         {
             bool result = true;
 
-            for (int i = 0; i < i_Input.Length && result; i+=2)
+            for (int i = 1; i < i_Input.Length && result; i+=2)
             {
                 if (i_Input[i] != ' ')
                 {
@@ -245,12 +245,13 @@ namespace Program
                 }
             }
 
-
             result = (i_UserGuess == ((char)eGameKeys.quitKey).ToString()) || 
-                (hasLegalLetters && hasSpaces && isCorrectSize);
+                (hasLegalLetters && hasSpaces && isCorrectSize && !m_Logic.hasDuplicateLetters(i_UserGuess));
 
             return result;
         }
+
+
 
 
 
@@ -273,14 +274,33 @@ namespace Program
 
             // TODO: we need to print here the # # # #, but we should do it more efficient
 
-
-
             Console.Write(System.Environment.NewLine);
            
             printBoard();
 
        
         }
+
+        private void insertBoardLine(StringBuilder i_Builder, int i_LineNum)
+        {
+            ushort barSize = calculateBarSize();
+            BoardLine currentLine = this.m_Logic.Board[i_LineNum];
+
+            ushort resultsAmount =
+                      (ushort)(currentLine.ExistRightPlaceResult + currentLine.ExistWrongPlaceResult);
+
+            i_Builder.Append("| ");
+
+            for (int col = 0; col < m_Logic.GuessArraySize; col++)
+            {
+                i_Builder.Append(m_Logic.Board[i_LineNum][col]);
+                Console.Write(' ');
+
+                // boardPrint.Append(' ');
+            }
+        }
+
+
 
         public void printBoard()
         {
@@ -296,10 +316,6 @@ namespace Program
             ushort resultsAmount = 
                 (ushort)(m_Logic.Board[line].ExistRightPlaceResult + m_Logic.Board[line].ExistWrongPlaceResult);
 
-            //StringBuilder boardPrint = new StringBuilder();
-
-            //boardPrint.Append("| ");
-
             Console.Write("| ");
 
 
@@ -307,17 +323,13 @@ namespace Program
             {
                 printGuess(line, i);
                 Console.Write(' ');
-
-               // boardPrint.Append(' ');
             }
             Console.Write('|');
-            //boardPrint.Append('|');
 
 
             for (int i = 0; i<m_Logic.Board[line].ExistRightPlaceResult; i++)
             {
                 Console.Write("{0} ", (char)BoardLine.eResultLetter.ExistRightPlace);
-                //boardPrint.AppendFormat("{0} ", (char)BoardLine.eResultLetter.ExistRightPlace);
             }
             for (int i = 0; i<m_Logic.Board[line].ExistWrongPlaceResult; i++)
             {

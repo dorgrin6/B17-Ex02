@@ -17,8 +17,6 @@ namespace Program
             MaxGuessLetter = 'H'
         }
 
-        private const ushort k_ValueInRightPlace = 0;
-
         private const short k_ValueNotExists = -1;
 
         private const ushort k_GuessArraySize = 4; // guesses array size
@@ -29,6 +27,7 @@ namespace Program
         private short[] m_GameGoal;
 
         private BoardLine[] m_Board; // game board      
+
 
         public ushort UserGuessesAmount
         {
@@ -49,6 +48,7 @@ namespace Program
                 return k_GuessArraySize;
             }
         }
+
 
         public BoardLine[] Board
         {
@@ -86,8 +86,8 @@ namespace Program
             for (int i = 0; i < i_UserGuess.Length; i++)
             {
                 char currentLetter = i_UserGuess[i];
-                ushort currentOffset = (ushort)(currentLetter - eGuessLetterBounds.MinGuessLetter); // offset from borad start
-
+                ushort currentOffset = 
+                    (ushort)(currentLetter - eGuessLetterBounds.MinGuessLetter); // offset from borad start
 
                 if (this.m_GameGoal[currentOffset] == i)
                 {
@@ -119,6 +119,41 @@ namespace Program
             }
         }
 
+        public bool hasDuplicateLetters(string i_Input)
+        {
+            bool result = false;
+            char[] splittedString = i_Input.Replace(" ", string.Empty).ToCharArray();
+
+            short valuesAmount = eGuessLetterBounds.MaxGuessLetter - eGuessLetterBounds.MinGuessLetter + 1;
+            short[] currentGuess = new short[valuesAmount]; // similar to GameGoal
+
+            // init currentGuess
+            for (int i = 0; i < currentGuess.Length; i++)
+            {
+                currentGuess[i] = k_ValueNotExists; 
+            }
+
+            // 
+            for (int i = 0; i < splittedString.Length; i++)
+            {
+                short currentOffset = (short)(splittedString[i] - 'A');
+                // found an element that already existed
+                if (currentGuess[currentOffset] != k_ValueNotExists)
+                {
+                    result = true;
+                    break;
+                }
+                else
+                {
+                    currentGuess[currentOffset] = (short)i;
+                }
+            }
+
+            return result;
+
+        }
+
+
         private void initGameGoalValues()
         {
             // amount of values in game
@@ -146,23 +181,6 @@ namespace Program
 
         }
 
-        /* check function
-        private bool isLetterDuplicate(int i_LetterIndex, string i_Letters)
-        {
-            bool result = false;
-            char letter = i_Letters[i_LetterIndex];
-            for (int i = 0; i < i_LetterIndex; i+=2)
-            {
-                if (i_Letters[i] == letter)
-                {
-                    result = true;
-                }
-            }
-
-            return result;
-        }
-
-    */
     }
     
 }
