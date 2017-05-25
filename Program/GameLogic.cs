@@ -83,13 +83,17 @@ namespace Program
             i_CountRightPlace = 0;
             i_CountWrongPlace = 0;
 
-            foreach (char currentLetter in i_UserGuess)
+            for (int i = 0; i < i_UserGuess.Length; i++)
             {
-                if (this.m_GameGoal[currentLetter -'A'] == k_ValueInRightPlace)
+                char currentLetter = i_UserGuess[i];
+                ushort currentOffset = (ushort)(currentLetter - eGuessLetterBounds.MinGuessLetter); // offset from borad start
+
+
+                if (this.m_GameGoal[currentOffset] == i)
                 {
                     ++i_CountRightPlace;
                 }
-                else if (this.m_GameGoal[currentLetter - 'A'] != k_ValueNotExists)
+                else if (this.m_GameGoal[currentOffset] != k_ValueNotExists)
                 {
                     ++i_CountWrongPlace;
                 }
@@ -142,7 +146,7 @@ namespace Program
 
         }
 
-        /*
+        /* check function
         private bool isLetterDuplicate(int i_LetterIndex, string i_Letters)
         {
             bool result = false;

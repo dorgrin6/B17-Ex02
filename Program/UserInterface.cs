@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
+
 namespace Program
 {
-
-    using System.Text;
-
     class UserInterface
     {
         GameLogic m_Logic = new GameLogic();
@@ -16,6 +13,7 @@ namespace Program
             noKey = 'N'
         }
 
+        // holds the current state of the game
         internal enum eRunState : ushort
         {
             Continue,
@@ -27,16 +25,21 @@ namespace Program
 
         public void Run()
         {
-            eRunState runState;
-            ushort stepsTaken;
+            eRunState runState; // current game's runState
+            ushort stepsTaken; // amount of steps taken
+
+            // game loop
             do
             {
-                runState = this.gameLoop(out stepsTaken);
+                Ex02.ConsoleUtils.Screen.Clear();
+                runState = this.gameSession(out stepsTaken); // start a new game session
+                this.PrintCurrentBoardStatus();
+
                 if (runState == eRunState.Won)
-                {
+                { 
                     Console.WriteLine("You guessed after {0} steps!", stepsTaken);
                 }
-                else if (runState == eRunState.Continue)
+                else if (runState == eRunState.Lost)
                 {
                     Console.WriteLine("No more guesses allowed. You Lost.");
                 }
@@ -45,45 +48,52 @@ namespace Program
                 string input = Console.ReadLine();
 
 
-                // TODO: input validation
+                // TODO: input validation, how do we make those smarter?
                 if (input == "N")
                 {
+                    Console.WriteLine("Goodbye!");
                     runState = eRunState.EndGame;
                 }
-               }
+            }
             while (runState != eRunState.EndGame);
-
         }
 
-        private eRunState gameLoop(out ushort o_StepsTaken)
+        /* gameSession: a single game session progress */
+        private eRunState gameSession(out ushort o_StepsTaken)
         {
-            eRunState runState = eRunState.Continue;
-            getGuessesAmount();
+            eRunState runState = eRunState.Continue; // current game run state
+            getGuessesAmount(); // get amount of guesses
             m_Logic.initiateGame();
             o_StepsTaken = 0;
 
-            // TODO: Q?, Correct answer
             for (int i = 0; i < m_Logic.UserGuessesAmount && runState == eRunState.Continue; i++)
             {
                 Ex02.ConsoleUtils.Screen.Clear();
                 PrintCurrentBoardStatus();
-                runState = this.handleInput(i);
+                runState = this.handleGuessInput(i);
                 ++o_StepsTaken;
             }
             
+            // check if user had too many steps
+            if (runState == eRunState.Continue && o_StepsTaken == this.m_Logic.UserGuessesAmount)
+            {
+                runState = eRunState.Lost;
+            }
+
             return runState;
         }
 
-        private eRunState handleInput(int i_BoardIndex)
+        private eRunState handleGuessInput(int i_BoardIndex)
         {
             eRunState result = eRunState.Continue;
             string userGuess = this.getUserGuess();
 
-            if (userGuess == ((char)eGameKeys.quitKey).ToString())
+            
+            if (userGuess == ((char)eGameKeys.quitKey).ToString()) // user opted to quit
             {
                 result = eRunState.EndSession;
             }
-            else
+            else // keep going
             {
                 BoardLine currentLine = this.m_Logic.Board[i_BoardIndex];
 
@@ -121,7 +131,7 @@ namespace Program
         }
 
 
-        // TODO: 2 almost duplicate input string methods here, how to bind them? would like function pointer as boolean
+        // TODO: 2 almost duplicate input string methods here, how to bind them? would like function pointer as boolean: getGuessesAmount, getUserGuess
 
         private void getGuessesAmount()
         {
@@ -185,6 +195,8 @@ namespace Program
             return userInput;
         }
 
+
+        /* Made to replace IsLegalInput if needed
         private bool inputHasSpaces(string i_Input)
         {
             bool result = true;
@@ -199,6 +211,8 @@ namespace Program
 
             return result;
         }
+        */
+
 
         public bool IsLegalInput(string i_UserGuess)
         {
