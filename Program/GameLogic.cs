@@ -133,7 +133,6 @@ namespace Program
                 currentGuess[i] = k_ValueNotExists; 
             }
 
-            // 
             for (int i = 0; i < splittedString.Length; i++)
             {
                 short currentOffset = (short)(splittedString[i] - 'A');
@@ -152,7 +151,6 @@ namespace Program
             return result;
 
         }
-
 
         private void initGameGoalValues()
         {
