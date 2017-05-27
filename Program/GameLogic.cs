@@ -17,9 +17,9 @@ namespace Program
             MaxGuessLetter = 'H'
         }
 
-        private const short k_ValueNotExists = -1;
+        internal const short k_ValueNotExists = -1;
 
-        private const ushort k_GuessArraySize = 4; // guesses array size
+        internal const ushort k_GuessArraySize = 4; // guesses array size
         
         private ushort m_UserGuessesAmount; // holds amount of guesses wanted by user
 
@@ -135,7 +135,7 @@ namespace Program
 
             for (int i = 0; i < splittedString.Length; i++)
             {
-                short currentOffset = (short)(splittedString[i] - 'A');
+                short currentOffset = (short)(splittedString[i] - GameLogic.eGuessLetterBounds.MinGuessLetter);
                 // found an element that already existed
                 if (currentGuess[currentOffset] != k_ValueNotExists)
                 {

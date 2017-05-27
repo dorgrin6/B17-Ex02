@@ -70,7 +70,7 @@ namespace Program
             if (input == ((char)eGameKeys.NoKey).ToString())
             {
                 io_RunState = eRunState.EndGame;
-                Console.WriteLine("Goddbye!");
+                Console.WriteLine("Goodbye!");
             }
         }
 
@@ -94,7 +94,7 @@ namespace Program
                         break;
                     case eInputValidation.UserGuessesAmount:
                         {
-                            isLegalInput = getGuessesAmount(userInput);
+                            isLegalInput = isLegalGuessesAmount(userInput);
                         }
                         break;
                     case eInputValidation.ExitScreen:
@@ -173,9 +173,14 @@ namespace Program
             userMessage.Append("Please type your next guess <");
             for (int i = 0; i < m_Logic.GuessArraySize; i++)
             {
-                userMessage.AppendFormat("{0} ", (char)('A' + i));
+                userMessage.AppendFormat("{0}", 
+                    (char)((char)GameLogic.eGuessLetterBounds.MinGuessLetter + i));
+                if (i < GameLogic.k_GuessArraySize - 1)
+                {
+                    userMessage.Append(k_WordDelimiter);
+                }
             }
-            userMessage.AppendFormat("\b> or '{0}' to quit", (char)eGameKeys.QuitKey);
+            userMessage.AppendFormat("> or '{0}' to quit", (char)eGameKeys.QuitKey);
 
             // get user guess
             string userGuess = getUserInput(eInputValidation.UserGuess, userMessage.ToString());
@@ -201,6 +206,7 @@ namespace Program
 
             return result;
         }
+        
 
         private bool hasUserWon(BoardLine CurrentBoardLine)
         {
@@ -221,11 +227,11 @@ namespace Program
             CurrentBoardLine.ExistWrongPlaceResult = wrongPlaceCount;
         }
 
-        private bool getGuessesAmount(string i_UserInput)
+        private bool isLegalGuessesAmount(string i_UserInput)
         {
-            ushort guessesAmount;
             bool result;
-            
+            ushort guessesAmount;
+           
             ushort minGuessBound = (ushort)GameLogic.eGuessAmountBounds.MinGuessNum;
             ushort maxGuessBound = (ushort)GameLogic.eGuessAmountBounds.MaxGuessNum;
 
