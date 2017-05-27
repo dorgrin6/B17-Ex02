@@ -21,7 +21,7 @@ namespace Program
             Continue,
             Lost,
             Won,
-            EndSession,
+            UserQuit,
             EndGame
         }
 
@@ -187,7 +187,7 @@ namespace Program
 
             if (userGuess == ((char)eGameKeys.QuitKey).ToString()) // user opted to quit
             {
-                result = eRunState.EndSession;
+                result = eRunState.UserQuit;
             }
             else // keep going
             {
