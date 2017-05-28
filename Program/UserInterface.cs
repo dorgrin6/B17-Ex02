@@ -149,9 +149,6 @@ namespace Program
             ushort guessesAmount = getGuessesAmount();
             m_Logic.UserGuessesAmount = guessesAmount; // set guessAmount
             m_Logic.initiateGame();
-            //TODO: remove
-            m_Logic.PrintGameGoal();
-            //DEBUG
             o_StepsTaken = 0;
 
             for (int i = 1; i < m_Logic.Board.Length && runState == eRunState.Continue; i++)

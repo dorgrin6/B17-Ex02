@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Program
 {
     class PrintUtils
     {
-        public static void PrintCurrentBoardStatus(GameLogic i_Logic)
+        public static void PrintCurrentBoardStatus()
         {
             ushort barSize = calculateBarSize(i_Logic);
             string pinsString = "Pins:";
@@ -81,8 +77,9 @@ namespace Program
             Console.WriteLine('|');
         }
 
-        private static ushort calculateBarSize(GameLogic i_Logic)
+        private static ushort calculateBarSize(BoardLine[] Board)
         {
+
             return (ushort)(i_Logic.GuessArraySize * 2 + 1);
         }
 
