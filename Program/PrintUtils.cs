@@ -17,10 +17,12 @@ namespace Program
             Console.WriteLine("Current board status:{0}", System.Environment.NewLine);
 
             Console.Write("|{0}", pinsString);
-            printDuplicateChar(' ', (ushort)(barSize - pinsString.Length));
+            //printDuplicateChar(' ', (ushort)(barSize - pinsString.Length));
+            printDuplicateTimes(" ", (ushort)(barSize - pinsString.Length));
 
             Console.Write("|{0}", resultsString);
-            printDuplicateChar(' ', (ushort)((barSize - 1) - resultsString.Length));
+            //printDuplicateChar(' ', (ushort)((barSize - 1) - resultsString.Length));
+            printDuplicateTimes(" ", (ushort)((barSize - 1) - resultsString.Length));
 
             Console.Write("|{0}", System.Environment.NewLine);
 
@@ -41,6 +43,7 @@ namespace Program
             ushort barSize = calculateBarSize(i_Board);
             ushort resultsAmount =
                 (ushort)(i_Board[line].ExistRightPlaceResult + i_Board[line].ExistWrongPlaceResult);
+            string resultString;
 
             Console.Write("| ");
 
@@ -52,7 +55,7 @@ namespace Program
 
             Console.Write('|');
 
-
+            /*
             for (int i = 0; i < i_Board[line].ExistRightPlaceResult; i++)
             {
                 Console.Write("{0} ", (char)BoardLine.eResultLetter.ExistRightPlace);
@@ -61,8 +64,15 @@ namespace Program
             {
                 Console.Write("{0} ", (char)BoardLine.eResultLetter.ExistWrongPlace);
             }
+            */
 
-            printDuplicateChar(' ', (ushort)((barSize - 1) - resultsAmount * 2));
+            resultString = string.Format("{0} ", (char)BoardLine.eResultLetter.ExistRightPlace);
+            printDuplicateTimes(resultString, i_Board[line].ExistRightPlaceResult);
+            resultString = string.Format("{0} ", (char)BoardLine.eResultLetter.ExistWrongPlace);
+            printDuplicateTimes(resultString, i_Board[line].ExistWrongPlaceResult);
+
+            //printDuplicateChar(' ', (ushort)((barSize - 1) - resultsAmount * 2));
+            printDuplicateTimes(" ", (ushort)((barSize - 1) - resultsAmount * 2));
             Console.Write("|{0}", System.Environment.NewLine);
             printBorder(barSize);
         }
@@ -75,9 +85,11 @@ namespace Program
         private static void printBorder(ushort barSize)
         {
             Console.Write('|');
-            printDuplicateChar('=', barSize);
+            //printDuplicateChar('=', barSize);
+            printDuplicateTimes("=", barSize);
             Console.Write('|');
-            printDuplicateChar('=', (ushort)(barSize - 1));
+            //printDuplicateChar('=', (ushort)(barSize - 1));
+            printDuplicateTimes("=", (ushort)(barSize - 1));
             Console.WriteLine('|');
         }
 
@@ -86,11 +98,21 @@ namespace Program
             return (ushort)(GameLogic.k_GuessArraySize * 2 + 1);
         }
 
+        /*
         private static void printDuplicateChar(char ch, ushort repeats)
         {
             for (int i = 0; i < repeats; i++)
             {
                 Console.Write(ch);
+            }
+        }
+        */
+
+        private static void printDuplicateTimes(string i_string, ushort i_times)
+        {
+            for (int i = 0; i < i_times; i++)
+            {
+                Console.Write(i_string);
             }
         }
     }
