@@ -17,6 +17,10 @@ namespace Program
             MaxGuessLetter = 'H'
         }
 
+        private const char k_SecretCoding = '#';
+
+        private const char k_EmptySpace = ' ';
+
         internal const short k_ValueNotExists = -1;
 
         internal const ushort k_GuessArraySize = 4; // guesses array size
@@ -68,10 +72,12 @@ namespace Program
 
         public void initiateGame()
         {
-            m_Board = new BoardLine[m_UserGuessesAmount];
-            for (int i = 0; i < m_UserGuessesAmount; i++)
+            m_Board = new BoardLine[m_UserGuessesAmount+1];
+            m_Board[0] = new BoardLine(k_GuessArraySize, k_SecretCoding);
+
+            for (int i = 1; i < m_Board.Length; i++)
             {
-                m_Board[i] = new BoardLine(k_GuessArraySize);
+                m_Board[i] = new BoardLine(k_GuessArraySize, k_EmptySpace);
             }
 
             createGameGoalValues();
