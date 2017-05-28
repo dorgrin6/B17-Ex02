@@ -1,27 +1,24 @@
-﻿using System;
-
-namespace Program
+﻿namespace Program
 {
     class BoardLine
     {
-        internal enum eResultLetter : ushort
-        {
-            ExistWrongPlace = 'X',
-            ExistRightPlace = 'V'
-        }
-
-
         private char[] m_UserGuess;
         private ushort m_ExistWrongPlaceResult = 0;
         private ushort m_ExistRightPlaceResult = 0;
 
-        public BoardLine(ushort amount, char letter)
+        public BoardLine(ushort i_Amount, char i_Letter)
         {
-            UserGuess = new char[amount];
-            for (int i = 0; i < amount; i++)
+            UserGuess = new char[i_Amount];
+            for (int i = 0; i < i_Amount; i++)
             {
-                UserGuess[i] = letter;
+                UserGuess[i] = i_Letter;
             }
+        }
+
+        internal enum eResultLetter : ushort
+        {
+            ExistWrongPlace = 'X',
+            ExistRightPlace = 'V'
         }
 
         public ushort ExistWrongPlaceResult
@@ -30,6 +27,7 @@ namespace Program
             {
                 return m_ExistWrongPlaceResult;
             }
+
             set
             {
                 this.m_ExistWrongPlaceResult = value;
@@ -42,6 +40,7 @@ namespace Program
             {
                 return m_ExistRightPlaceResult;
             }
+
             set
             {
                 this.m_ExistRightPlaceResult = value;
@@ -54,22 +53,23 @@ namespace Program
             {
                 return this.m_UserGuess;
             }
+
             set
             {
                 m_UserGuess = value;
-
             }
         }
 
-        public char this[int i_index]
+        public char this[int i_Index]
         {
             get
             {
-                return UserGuess[i_index];
+                return UserGuess[i_Index];
             }
+
             set
             {
-                UserGuess[i_index] = value;
+                UserGuess[i_Index] = value;
             }
         }
     }

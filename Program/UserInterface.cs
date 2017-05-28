@@ -3,14 +3,13 @@ using System.Text;
 
 namespace Program
 {
-    using global::Ex02.ConsoleUtils;
+    using Ex02.ConsoleUtils;
 
     class UserInterface
     {
         private const string k_WordDelimiter = " ";
 
-
-        GameLogic m_Logic = new GameLogic();
+        private GameLogic m_Logic = new GameLogic();
 
         internal enum eGameKeys : ushort
         {
@@ -37,7 +36,6 @@ namespace Program
             ExitScreen
         }
 
-
         public void Run()
         {
             eRunState runState; // current game's runState
@@ -51,7 +49,8 @@ namespace Program
                 Screen.Clear();
                 PrintUtils.PrintCurrentBoardStatus(m_Logic.Board);
                 handleEndSession(ref runState, stepsTaken);
-            } while (runState != eRunState.EndGame);
+            }
+            while (runState != eRunState.EndGame);
         }
 
         private void handleEndSession(ref eRunState io_RunState, ushort i_StepsTaken)
@@ -64,7 +63,8 @@ namespace Program
             {
                 Console.WriteLine("No more guesses allowed. You Lost.");
             }
-            string userMessage = String.Format(
+
+            string userMessage = string.Format(
                 "Would you like to start a new game? ({0}/{1})",
                 (char)eGameKeys.YesKey,
                 (char)eGameKeys.NoKey);
@@ -119,7 +119,7 @@ namespace Program
 
         private bool isLegalExit(string i_UserInput)
         {
-            return (i_UserInput == ((char)(eGameKeys.YesKey)).ToString() || i_UserInput == ((char)eGameKeys.NoKey).ToString());
+            return i_UserInput == ((char)eGameKeys.YesKey).ToString() || i_UserInput == ((char)eGameKeys.NoKey).ToString();
         }
 
         private ushort getGuessesAmount()
@@ -129,10 +129,10 @@ namespace Program
             ushort minGuessBound = (ushort)GameLogic.eGuessAmountBounds.MinGuessNum;
             ushort maxGuessBound = (ushort)GameLogic.eGuessAmountBounds.MaxGuessNum;
 
-            string userMessage = 
-                string.Format("Please enter the maximum amount of guesses you wish ({0} - {1})",
-                  minGuessBound, maxGuessBound);
-
+            string userMessage = string.Format(
+                "Please enter the maximum amount of guesses you wish ({0} - {1})",
+                minGuessBound,
+                maxGuessBound);
 
             // get validated user input
             string input = getUserInput(eInputValidation.UserGuessesAmount, userMessage);
@@ -141,14 +141,13 @@ namespace Program
             return result;
         }
 
-        /* gameSession: a single game session progress */
+        // gameSession: a single game session progress
         private eRunState gameSession(out ushort o_StepsTaken)
         {
-            
             eRunState runState = eRunState.Continue; // current game run state
             ushort guessesAmount = getGuessesAmount();
             m_Logic.UserGuessesAmount = guessesAmount; // set guessAmount
-            m_Logic.initiateGame();
+            m_Logic.InitiateGame();
             o_StepsTaken = 0;
 
             for (int i = 1; i < m_Logic.Board.Length && runState == eRunState.Continue; i++)
@@ -177,27 +176,25 @@ namespace Program
             userMessage.Append("Please type your next guess <");
             for (int i = 0; i < m_Logic.GuessArraySize; i++)
             {
-                userMessage.AppendFormat("{0}", 
-                    (char)((char)GameLogic.eGuessLetterBounds.MinGuessLetter + i));
+                userMessage.AppendFormat("{0}", (char)((char)GameLogic.eGuessLetterBounds.MinGuessLetter + i));
                 if (i < GameLogic.k_GuessArraySize - 1)
                 {
                     userMessage.Append(k_WordDelimiter);
                 }
             }
+
             userMessage.AppendFormat("> or '{0}' to quit", (char)eGameKeys.QuitKey);
 
             // get user guess
             string userGuess = getUserInput(eInputValidation.UserGuess, userMessage.ToString());
 
-            if (userGuess == ((char)eGameKeys.QuitKey).ToString()) // user opted to quit
+            if (userGuess == ((char)eGameKeys.QuitKey).ToString())
             {
-                result = eRunState.UserQuit;
+                result = eRunState.UserQuit; // user opted to quit
             }
-            else // keep going
-            {
-
-
-                insertGuessToBoard(i_BoardIndex, userGuess);
+            else
+            { // keep going
+                insertGuessToBoard(i_BoardIndex, userGuess);  
 
                 if (m_Logic.IsWinningGuess(i_BoardIndex))
                 {
@@ -244,7 +241,7 @@ namespace Program
             bool hasSpaces = true;
             bool hasLegalLetters = true;
 
-            bool isCorrectSize = (i_UserGuess.Length == m_Logic.GuessArraySize * 2 - 1);
+            bool isCorrectSize = i_UserGuess.Length == (m_Logic.GuessArraySize * 2) - 1;
 
             for (int i = 0; i < i_UserGuess.Length; i++)
             {
@@ -269,98 +266,7 @@ namespace Program
             }
 
             return (i_UserGuess == ((char)eGameKeys.QuitKey).ToString())
-                || (hasLegalLetters && hasSpaces && isCorrectSize && !m_Logic.hasDuplicateLetters(i_UserGuess));
+                || (hasLegalLetters && hasSpaces && isCorrectSize && !m_Logic.HasDuplicateLetters(i_UserGuess));
         }
-
-
-        /*
-        // Print methods
-
-        public void PrintCurrentBoardStatus()
-        {
-            ushort barSize = calculateBarSize();
-            string pinsString = "Pins:";
-            string resultsString = "Results:";
-
-            Console.WriteLine("Current board status:{0}",System.Environment.NewLine);
-
-            Console.Write("|{0}", pinsString);
-            printDuplicateChar(' ', (ushort)(barSize - pinsString.Length));
-
-            Console.Write("|{0}", resultsString);
-            printDuplicateChar(' ', (ushort)((barSize-1) - resultsString.Length));
-
-            Console.Write("|{0}", System.Environment.NewLine);
-           
-            printBoard();
-        }
-
-
-        private void printBoard()
-        {
-            for(int i = 0; i < m_Logic.Board.Length; i++)
-            {
-                printBoardLine(i);
-            }
-        }
-
-        private void printBoardLine(int line)
-        {
-            ushort barSize = calculateBarSize();
-            ushort resultsAmount = 
-                (ushort)(m_Logic.Board[line].ExistRightPlaceResult + m_Logic.Board[line].ExistWrongPlaceResult);
-
-            Console.Write("| ");
-
-            for (int i = 0; i < m_Logic.GuessArraySize; i++)
-            {
-                printBoardCell(line, i);
-                Console.Write(' ');
-            }
-            
-            Console.Write('|');
-
-
-            for (int i = 0; i<m_Logic.Board[line].ExistRightPlaceResult; i++)
-            {
-                Console.Write("{0} ", (char)BoardLine.eResultLetter.ExistRightPlace);
-            }
-            for (int i = 0; i<m_Logic.Board[line].ExistWrongPlaceResult; i++)
-            {
-                Console.Write("{0} ", (char)BoardLine.eResultLetter.ExistWrongPlace);
-            }
-
-            printDuplicateChar(' ', (ushort)((barSize-1) - resultsAmount * 2));
-            Console.Write("|{0}",System.Environment.NewLine);
-            printBorder(barSize);
-        }
-
-        private void printBoardCell(int line, int col)
-        {
-            Console.Write("{0}", m_Logic.Board[line][col]);
-        }
-
-        private void printBorder(ushort barSize)
-        {
-            Console.Write('|');
-            printDuplicateChar('=', barSize);
-            Console.Write('|');
-            printDuplicateChar('=', (ushort)(barSize - 1));
-            Console.WriteLine('|');
-        }
-
-        private ushort calculateBarSize()
-        {
-            return (ushort)(m_Logic.GuessArraySize * 2 + 1);
-        }
-
-        private void printDuplicateChar(char ch, ushort repeats)
-        {
-            for (int i = 0; i < repeats; i++)
-            {
-                Console.Write(ch);
-            }
-        }
-        */
     }
 }
