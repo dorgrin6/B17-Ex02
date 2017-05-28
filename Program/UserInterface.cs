@@ -2,6 +2,8 @@
 using System.Text;
 namespace Program
 {
+    using global::Ex02.ConsoleUtils;
+
     class UserInterface
     {
         private const string k_WordDelimiter = " ";
@@ -42,9 +44,9 @@ namespace Program
             // game loop
             do
             {
-                Ex02.ConsoleUtils.Screen.Clear();
+                Screen.Clear();
                 runState = this.gameSession(out stepsTaken); // start a new game session
-                Ex02.ConsoleUtils.Screen.Clear();
+                Screen.Clear();
                 PrintCurrentBoardStatus();
                 handleEndSession(ref runState, stepsTaken);
             } while (runState != eRunState.EndGame);
@@ -145,11 +147,14 @@ namespace Program
             ushort guessesAmount = getGuessesAmount();
             m_Logic.UserGuessesAmount = guessesAmount; // set guessAmount
             m_Logic.initiateGame();
+            //TODO: remove
+            m_Logic.PrintGameGoal();
+            //DEBUG
             o_StepsTaken = 0;
 
             for (int i = 0; i < m_Logic.UserGuessesAmount && runState == eRunState.Continue; i++)
             {
-                Ex02.ConsoleUtils.Screen.Clear();
+                Screen.Clear();
                 PrintCurrentBoardStatus();
                 runState = handleGuessInput(i);
                 ++o_StepsTaken;
@@ -191,14 +196,11 @@ namespace Program
             }
             else // keep going
             {
-                BoardLine currentLine = this.m_Logic.Board[i_BoardIndex];
 
-                // split guess by whitespaces and insert to board
-                currentLine.UserGuess = userGuess.Replace(k_WordDelimiter, string.Empty).ToCharArray();
 
-                setExistingLettersInGuess(currentLine);
+                insertGuessToBoard(i_BoardIndex, userGuess);
 
-                if (hasUserWon(currentLine))
+                if (m_Logic.IsWinningGuess(i_BoardIndex))
                 {
                     result = eRunState.Won;
                 }
@@ -206,26 +208,23 @@ namespace Program
 
             return result;
         }
-        
 
-        private bool hasUserWon(BoardLine CurrentBoardLine)
+        private void insertGuessToBoard(int i_BoardIndex, string i_UserGuess)
         {
-            return (CurrentBoardLine.ExistRightPlaceResult == this.m_Logic.GuessArraySize);
+            BoardLine lineToInsert = m_Logic.Board[i_BoardIndex];
+            int jumpsBetweenLetters = k_WordDelimiter.Length + 1;
+            int j = 0;
+
+            // split guess by word delimiter and insert to board
+            for (int i = 0; i < i_UserGuess.Length; i += jumpsBetweenLetters)
+            {
+                lineToInsert.UserGuess[j++] = i_UserGuess[i];
+            }
+
+            // set exisiing values in BoardLine
+            m_Logic.SetExistingValuesInGuess(i_BoardIndex);
         }
 
-
-        private void setExistingLettersInGuess(BoardLine CurrentBoardLine)
-        {
-            ushort rightPlaceCount;
-            ushort wrongPlaceCount;
-
-            // count right place and wrong place guesses
-            this.m_Logic.CountLettersExistsInGuess(CurrentBoardLine.UserGuess, out rightPlaceCount, out wrongPlaceCount);
-
-            // set results
-            CurrentBoardLine.ExistRightPlaceResult = rightPlaceCount;
-            CurrentBoardLine.ExistWrongPlaceResult = wrongPlaceCount;
-        }
 
         private bool isLegalGuessesAmount(string i_UserInput)
         {
@@ -278,7 +277,7 @@ namespace Program
 
             for (int i = 0; i < i_UserGuess.Length; i++)
             {
-                if (m_Logic.isLetterLegal(i, i_UserGuess))
+                if (m_Logic.IsLetterLegal(i, i_UserGuess))
                 {
                     i++;
                 }

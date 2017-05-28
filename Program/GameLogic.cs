@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 namespace Program
 {
+    using System.Threading;
+
     class GameLogic
     {
         internal enum eGuessAmountBounds : ushort
@@ -78,7 +80,7 @@ namespace Program
         }
 
 
-        public void CountLettersExistsInGuess(char[] i_UserGuess, out ushort i_CountRightPlace, out ushort i_CountWrongPlace)
+        private void countExiststingValuesInGuess(char[] i_UserGuess, out ushort i_CountRightPlace, out ushort i_CountWrongPlace)
         {
             i_CountRightPlace = 0;
             i_CountWrongPlace = 0;
@@ -89,7 +91,7 @@ namespace Program
                 ushort currentOffset = 
                     (ushort)(currentLetter - eGuessLetterBounds.MinGuessLetter); // offset from borad start
 
-                if (this.m_GameGoal[currentOffset] == i)
+                if (m_GameGoal[currentOffset] == i)
                 {
                     ++i_CountRightPlace;
                 }
@@ -98,6 +100,30 @@ namespace Program
                     ++i_CountWrongPlace;
                 }
             }
+        }
+
+        //TODO:: DEBUG
+        public void PrintGameGoal()
+        {
+            foreach (var x in this.m_GameGoal)
+            {
+                Console.WriteLine("{0} ",x);
+            }
+        }
+            
+        //
+
+        public void SetExistingValuesInGuess(int i_BoardIndex)
+        {
+            ushort rightPlaceCount;
+            ushort wrongPlaceCount;
+
+            // count right place and wrong place guesses
+            this.countExiststingValuesInGuess(this.Board[i_BoardIndex].UserGuess, out rightPlaceCount, out wrongPlaceCount);
+
+            // set results
+            Board[i_BoardIndex].ExistRightPlaceResult = rightPlaceCount;
+            Board[i_BoardIndex].ExistWrongPlaceResult = wrongPlaceCount;
         }
 
         private void createGameGoalValues()
@@ -152,6 +178,11 @@ namespace Program
 
         }
 
+        public bool IsWinningGuess(int i_BoardIndex)
+        {
+            return (Board[i_BoardIndex].ExistRightPlaceResult == (ushort)k_GuessArraySize);
+        }
+
         private void initGameGoalValues()
         {
             // amount of values in game
@@ -166,9 +197,8 @@ namespace Program
         }
 
 
-        public bool isLetterLegal(int i_LetterIndex, string i_Letters )
+        public bool IsLetterLegal(int i_LetterIndex, string i_Letters)
         {
-            //(!isLetterDuplicate(i_LetterIndex,i_Letters) && 
             return isLetterInBounds(i_Letters[i_LetterIndex]);
         }
 
