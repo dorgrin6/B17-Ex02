@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-
 namespace Program
 {
-    using System.Threading;
-
     class GameLogic
     {
         internal enum eGuessAmountBounds : ushort
@@ -107,17 +103,6 @@ namespace Program
                 }
             }
         }
-
-        //TODO:: DEBUG
-        public void PrintGameGoal()
-        {
-            foreach (var x in this.m_GameGoal)
-            {
-                Console.WriteLine("{0} ",x);
-            }
-        }
-            
-        //
 
         public void SetExistingValuesInGuess(int i_BoardIndex)
         {

@@ -11,6 +11,8 @@ namespace Program
 
         GameLogic m_Logic = new GameLogic();
 
+
+
         internal enum eGameKeys : ushort
         {
             QuitKey = 'Q',
@@ -148,9 +150,6 @@ namespace Program
             ushort guessesAmount = getGuessesAmount();
             m_Logic.UserGuessesAmount = guessesAmount; // set guessAmount
             m_Logic.initiateGame();
-            //TODO: remove
-            m_Logic.PrintGameGoal();
-            //DEBUG
             o_StepsTaken = 0;
 
             for (int i = 1; i < m_Logic.Board.Length && runState == eRunState.Continue; i++)
@@ -197,8 +196,6 @@ namespace Program
             }
             else // keep going
             {
-
-
                 insertGuessToBoard(i_BoardIndex, userGuess);
 
                 if (m_Logic.IsWinningGuess(i_BoardIndex))
@@ -240,35 +237,7 @@ namespace Program
 
             return result;
         }
-
-
-        /*
-        //Made to replace IsLegalGuess if needed
-        private bool inputHasSpaces(string i_Input)
-        {
-            bool result = true;
-
-            for (int i = 1; i < i_Input.Length && result; i+=2)
-            {
-                if (i_Input[i] != ' ')
-                {
-                    result = false;
-                }
-            }
-
-            return result;
-        }
-
-        private bool isGuessWithLegalLetters(string i_Input)
-        {
-            for (int i = 1; i < i_Input.Length; i+= 2)
-            {
-                
-            }
-        }
-        */
-
-
+ 
         private bool isLegalGuess(string i_UserGuess)
         {
             bool hasSpaces = true;
@@ -302,22 +271,6 @@ namespace Program
                 || (hasLegalLetters && hasSpaces && isCorrectSize && !m_Logic.hasDuplicateLetters(i_UserGuess));
         }
 
-
-
-        // Print methods
-        /*
-        private void printCurrentBoardStatus()
-        {
-            StringBuilder boardPrint = new StringBuilder();
-            ushort barSize = this.calculateBarSize();
-            string pinsString = "Pins:";
-            string resultsString = "Results:";
-
-            boardPrint.AppendFormat("Current board status:{0}{0}", System.Environment.NewLine);
-            boardPrint.AppendFormat("|{0}", pinsString);
-
-        }*/
-
         public void PrintCurrentBoardStatus()
         {
             ushort barSize = calculateBarSize();
@@ -334,8 +287,6 @@ namespace Program
 
             Console.Write("|{0}", System.Environment.NewLine);
 
-            // TODO: we need to print here the # # # #, but we should do it more efficient
-           
             printBoard();
         }
 
