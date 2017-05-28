@@ -49,7 +49,7 @@ namespace Program
                 Screen.Clear();
                 runState = this.gameSession(out stepsTaken); // start a new game session
                 Screen.Clear();
-                PrintUtils.PrintCurrentBoardStatus(m_Logic);
+                PrintUtils.PrintCurrentBoardStatus(m_Logic.Board);
                 handleEndSession(ref runState, stepsTaken);
             } while (runState != eRunState.EndGame);
         }
@@ -157,7 +157,7 @@ namespace Program
             for (int i = 1; i < m_Logic.Board.Length && runState == eRunState.Continue; i++)
             {
                 Screen.Clear();
-                PrintUtils.PrintCurrentBoardStatus(m_Logic);
+                PrintUtils.PrintCurrentBoardStatus(m_Logic.Board);
                 runState = handleGuessInput(i);
                 ++o_StepsTaken;
             }
