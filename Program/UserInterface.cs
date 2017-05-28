@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+
 namespace Program
 {
     using global::Ex02.ConsoleUtils;
@@ -10,8 +11,6 @@ namespace Program
 
 
         GameLogic m_Logic = new GameLogic();
-
-
 
         internal enum eGameKeys : ushort
         {
@@ -50,7 +49,7 @@ namespace Program
                 Screen.Clear();
                 runState = this.gameSession(out stepsTaken); // start a new game session
                 Screen.Clear();
-                PrintCurrentBoardStatus();
+                PrintUtils.PrintCurrentBoardStatus(m_Logic);
                 handleEndSession(ref runState, stepsTaken);
             } while (runState != eRunState.EndGame);
         }
@@ -150,12 +149,15 @@ namespace Program
             ushort guessesAmount = getGuessesAmount();
             m_Logic.UserGuessesAmount = guessesAmount; // set guessAmount
             m_Logic.initiateGame();
+            //TODO: remove
+            m_Logic.PrintGameGoal();
+            //DEBUG
             o_StepsTaken = 0;
 
             for (int i = 1; i < m_Logic.Board.Length && runState == eRunState.Continue; i++)
             {
                 Screen.Clear();
-                PrintCurrentBoardStatus();
+                PrintUtils.PrintCurrentBoardStatus(m_Logic);
                 runState = handleGuessInput(i);
                 ++o_StepsTaken;
             }
@@ -196,6 +198,8 @@ namespace Program
             }
             else // keep going
             {
+
+
                 insertGuessToBoard(i_BoardIndex, userGuess);
 
                 if (m_Logic.IsWinningGuess(i_BoardIndex))
@@ -237,7 +241,7 @@ namespace Program
 
             return result;
         }
- 
+
         private bool isLegalGuess(string i_UserGuess)
         {
             bool hasSpaces = true;
@@ -271,6 +275,10 @@ namespace Program
                 || (hasLegalLetters && hasSpaces && isCorrectSize && !m_Logic.hasDuplicateLetters(i_UserGuess));
         }
 
+
+        /*
+        // Print methods
+
         public void PrintCurrentBoardStatus()
         {
             ushort barSize = calculateBarSize();
@@ -286,28 +294,10 @@ namespace Program
             printDuplicateChar(' ', (ushort)((barSize-1) - resultsString.Length));
 
             Console.Write("|{0}", System.Environment.NewLine);
-
+           
             printBoard();
         }
 
-        /*
-        private void insertBoardLine(StringBuilder i_Builder, int i_LineNum)
-        {
-            ushort barSize = calculateBarSize();
-            BoardLine currentLine = this.m_Logic.Board[i_LineNum];
-
-            ushort resultsAmount =
-                      (ushort)(currentLine.ExistRightPlaceResult + currentLine.ExistWrongPlaceResult);
-
-            i_Builder.Append("| ");
-
-            for (int col = 0; col < m_Logic.GuessArraySize; col++)
-            {
-                i_Builder.Append(m_Logic.Board[i_LineNum][col]);
-                Console.Write(' ');
-            }
-        }
-        */
 
         private void printBoard()
         {
@@ -374,5 +364,6 @@ namespace Program
                 Console.Write(ch);
             }
         }
+        */
     }
 }

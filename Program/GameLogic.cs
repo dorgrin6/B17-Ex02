@@ -15,9 +15,11 @@ namespace Program
             MaxGuessLetter = 'H'
         }
 
-        private const char k_SecretCoding = '#';
-
-        private const char k_EmptySpace = ' ';
+        internal enum eBoardPadding : ushort
+        {
+            SecretCoding = '#',
+            EmptySpace = ' '
+        }
 
         internal const short k_ValueNotExists = -1;
 
@@ -71,11 +73,11 @@ namespace Program
         public void initiateGame()
         {
             m_Board = new BoardLine[m_UserGuessesAmount+1];
-            m_Board[0] = new BoardLine(k_GuessArraySize, k_SecretCoding);
+            m_Board[0] = new BoardLine(k_GuessArraySize, (char)eBoardPadding.SecretCoding);
 
             for (int i = 1; i < m_Board.Length; i++)
             {
-                m_Board[i] = new BoardLine(k_GuessArraySize, k_EmptySpace);
+                m_Board[i] = new BoardLine(k_GuessArraySize, (char)eBoardPadding.EmptySpace);
             }
 
             createGameGoalValues();
