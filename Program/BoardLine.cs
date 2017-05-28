@@ -14,12 +14,12 @@ namespace Program
         private ushort m_ExistWrongPlaceResult = 0;
         private ushort m_ExistRightPlaceResult = 0;
 
-        public BoardLine(ushort amount)
+        public BoardLine(ushort amount, char letter)
         {
             UserGuess = new char[amount];
             for (int i = 0; i < amount; i++)
             {
-                UserGuess[i] = ' ';
+                UserGuess[i] = letter;
             }
         }
 

@@ -8,6 +8,7 @@ namespace Program
     {
         private const string k_WordDelimiter = " ";
 
+
         GameLogic m_Logic = new GameLogic();
 
         internal enum eGameKeys : ushort
@@ -152,7 +153,7 @@ namespace Program
             //DEBUG
             o_StepsTaken = 0;
 
-            for (int i = 0; i < m_Logic.UserGuessesAmount && runState == eRunState.Continue; i++)
+            for (int i = 1; i < m_Logic.Board.Length && runState == eRunState.Continue; i++)
             {
                 Screen.Clear();
                 PrintCurrentBoardStatus();
@@ -331,8 +332,9 @@ namespace Program
             Console.Write("|{0}", resultsString);
             printDuplicateChar(' ', (ushort)((barSize-1) - resultsString.Length));
 
+            Console.Write("|{0}", System.Environment.NewLine);
+
             // TODO: we need to print here the # # # #, but we should do it more efficient
-            Console.WriteLine();
            
             printBoard();
         }
@@ -358,12 +360,12 @@ namespace Program
 
         private void printBoard()
         {
-            for(int i = 0; i < m_Logic.UserGuessesAmount; i++)
+            for(int i = 0; i < m_Logic.Board.Length; i++)
             {
                 printBoardLine(i);
             }
         }
-       
+
         private void printBoardLine(int line)
         {
             ushort barSize = calculateBarSize();
@@ -374,7 +376,7 @@ namespace Program
 
             for (int i = 0; i < m_Logic.GuessArraySize; i++)
             {
-                printGuess(line, i);
+                printBoardCell(line, i);
                 Console.Write(' ');
             }
             
@@ -395,7 +397,7 @@ namespace Program
             printBorder(barSize);
         }
 
-        private void printGuess(int line, int col)
+        private void printBoardCell(int line, int col)
         {
             Console.Write("{0}", m_Logic.Board[line][col]);
         }
