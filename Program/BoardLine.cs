@@ -10,6 +10,7 @@ namespace Program
             ExistRightPlace = 'V'
         }
 
+
         private char[] m_UserGuess;
         private ushort m_ExistWrongPlaceResult = 0;
         private ushort m_ExistRightPlaceResult = 0;
